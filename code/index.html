@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Workshop App</title>
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+	<!-- Templates! -->
+
+	<div class="template" id="headerTpl">
+		<header id="app-header">
+			<div>
+				<h1 class="app-slogan">Our users have written <strong>102</strong> messages so far!</h1>
+				<section class="logged-user-info no-user">
+					<img src="img/user.png" width="30" height="30" />
+					<span>
+						No user data
+					</span>
+				</section>
+			</div>
+		</header>
+	</div>
+
+	<div class="template" id="loginTpl">
+		<div id="popup">
+			<div class="popup-content">
+				<form class="login-form">
+					<h1>I'm <i></i> <strong>logging in</strong> joining</h1>
+					<fieldset>
+						<ul>
+							<li>
+								<input type="email" name="login" placeholder="e-mail address" required />
+							</li>
+							<li>
+								<input type="password" name="password" placeholder="password" required />
+							</li>
+							<li>
+								<button type="submit"><span>login</span></button>
+							</li>
+							<li>
+								<p class="register"><a href="#">register</a></p>
+							</li>
+						</ul>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="template" id="registrationTpl">
+		<div id="popup">
+			<div class="popup-content">
+				<form class="login-form">
+					<h1>I'm <i></i> <strong>registering in</strong> joining</h1>
+					<fieldset>
+						<ul>
+							<li>
+								<input type="email" name="login" placeholder="e-mail address" required />
+							</li>
+							<li>
+								<input type="password" name="password" placeholder="password" required />
+							</li>
+							<li>
+								<input type="date" name="birth" placeholder="date of birthday" required />
+							</li>
+							<li>
+								<button type="submit"><span>register</span></button>
+							</li>
+						</ul>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="template" id="tweetsTpl">
+		<div id="app-container">
+			<section class="tweets">
+				<ul>
+					<li>
+						<img src="img/user.png" width="48" height="48" />
+						<span>
+							<strong>Michał Jaskólski</strong>
+							<time datetime="13:01:20">13:01:20</time>
+						</span>
+						<p>This is an example message written by a registered user. Join the conversation to write your own!</p>
+					</li>
+				</ul>
+			</section>
+			<section class="add-tweet">
+				<button type="button">Join the conversation</button>
+				<form>
+					<img src="img/user.png" width="48" height="48" />
+					<textarea name="tweet-msg" maxlength="140" required></textarea>
+					<button type="submit">send</button>
+				</form>
+			</section>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="lib/socket.io.js"></script>
+	<script type="text/javascript">
+		window.App = {};
+	</script>
+	<script type="text/javascript" src="js/Config.js"></script>
+	<script type="text/javascript" src="js/Helpers.js"></script>
+	<script type="text/javascript" src="js/EventEmitter.js"></script>
+	<script type="text/javascript" src="js/Application.js"></script>
+
+	<script type="text/javascript" src="js/controller/BaseController.js"></script>
+	<script type="text/javascript" src="js/controller/HeaderController.js"></script>
+	<script type="text/javascript" src="js/controller/LoginController.js"></script>
+	<script type="text/javascript" src="js/controller/RegistrationController.js"></script>
+	<script type="text/javascript" src="js/controller/TweetsController.js"></script>
+	<script type="text/javascript" src="js/view/BaseView.js"></script>
+	<script type="text/javascript" src="js/view/HeaderView.js"></script>
+	<script type="text/javascript" src="js/view/LoginView.js"></script>
+	<script type="text/javascript" src="js/view/RegistrationView.js"></script>
+	<script type="text/javascript" src="js/view/TweetsView.js"></script>
+
+
+</body>
+</html>

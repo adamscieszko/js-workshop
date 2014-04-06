@@ -1,0 +1,11 @@
+img {
+	border: 1px solid black;
+}
+ul {
+	padding: 1em;
+	margin: 1em;
+}
+.columns div {
+	display: inline-block;
+	width: 30%;
+}

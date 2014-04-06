@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>JS Workshop - The Presentation</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>Modern JavaScript</h1>
+					<h2>in practice</h2>
+				</section>
+
+				<section>
+					<h2>Language basics</h2>
+				</section>
+
+				<section>
+					<h3>JavaScript has:</h3>
+					<ul>
+						<li>C-like syntax</li>
+						<li>Dynamic typing</li>
+						<li>First-class functions</li>
+						<li>Object Oriented / Functional</li>
+						<li>Prototype-based inheritance</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Data types</h3>
+					<div class="column" style="width: 90%; text-align: left;">
+						<p>Primary</p>
+						<ul>
+							<li>String</li>
+							<li>Number</li>
+							<li>Boolean</li>
+						</ul>
+						<p>Composite</p>
+						<ul>
+							<li>Array</li>
+							<li>Object</li>
+						</ul>
+						<p>Special</p>
+						<ul>
+							<li>Null</li>
+							<li>undefined</li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<h3>Scope</h3>
+					<p>Function scope and context</p>
+					<pre><code>
+var a = 3;
+function foo () {
+	var b = 5;
+	if (a === 3) {
+		var c = 7;
+	}
+	console.log(a, b, c, this);
+}
+foo(); // 3, 5, 7, Window
+console.log(a, b, c); // 3, undefined, undefined
+						</code></pre>
+				</section>
+				<section>
+					<h3>Context</h3>
+					<p>"this" in JavaScript is a dynamic value, it depends on how the function i called</p>
+
+					<pre><code>
+var func = function () { console.log(this); };
+func(); // window
+						</code></pre>
+					<pre><code>
+var obj = {};
+obj.func = func;
+obj.func(); // obj
+					</code></pre>
+					<p>Change context with bind, call or apply</p>
+					<pre><code>
+func.call(someObj); //someObj
+func.apply(someObj); //someObj
+var func2 = func.bind(someObj);
+func(); //window
+func2(); //someObj
+						</code></pre>
+				</section>
+				<section>
+					<h3>Closure</h3>
+					<pre><code>
+function foo () {
+	var a = 2;
+	return function (b) {
+		console.log(a * b);
+	}
+}
+var doubleMe = foo();
+console.log(doubleMe(3)); // 6
+						</code></pre>
+				</section>
+				<section>
+					<h2>Time to practice</h2>
+				</section>
+
+				<section>
+					<h2>Namespace creation</h2>
+					<pre><code>
+window.App = {};
+				</code></pre>
+				</section>
+
+				<section>
+					<h2>Event Emitter</h2>
+
+				<pre><code>
+App.EventEmitter = function () {
+    // ...
+}
+
+App.EventEmitter.prototype.on = function (event, fn, scope) {
+	// ...
+};
+App.EventEmitter.prototype.off = function (event, fn, scope) {
+	// ...
+}
+App.EventEmitter.prototype.emit = function (event, data) {
+	// ...
+}</code></pre>
+				</section>
+				<section>
+					<h3>Event emitter implementation</h3>
+					<pre><code>
+App.EventEmitter = function () {
+    this._events = {};
+}
+
+App.EventEmitter.prototype.on = function (event, fn, scope) {
+    if (typeof this._events[event] === 'undefined') {
+        this._events[event] = [];
+    }
+    this._events[event].push({fn: fn, scope: scope || window);
+};
+						</code></pre>
+				</section>
+
+				<section>
+					<h3>Event emitter implementation</h3>
+					<pre><code>
+App.EventEmitter.prototype.off = function (event, fn, scope) {
+    if (typeof this._events[event] !== 'undefined') {
+        var n = _events[event].length;
+        while (n--) {
+            if (this._events[event][n].fn === fn
+            	&& (typeof scope === 'undefined'
+            		|| scope === this._events[event][n].scope
+            	)
+            ) {
+                this._events[event].splice(n, 1);
+            }
+        }
+
+    }
+};
+						</code></pre>
+				</section>
+				<section>
+					<h3>Event emitter implementation</h3>
+					<pre><code>
+App.EventEmitter.prototype.emit = function (event, data) {
+    if (typeof this._events[event] !== 'undefined') {
+        var i = 0,
+            n = this._events[event].length;
+        for (i; i < n; ++i) {
+            this._events[event][i].fn.call(this._events[event][i].scope, data);
+        }
+    }
+};
+						</code></pre>
+				</section>
+
+				<section>
+					<h2>Now, something more advanced</h2>
+				</section>
+
+				<section>
+					<h2>(Almost) twitter app</h2>
+					<img src="img/app.png"/>
+				</section>
+
+				<section>Application architecture</section>
+				<section>
+					<h2>MVC architecture</h2>
+					<p>Application is divided into separated functional layers:</p>
+					<ul>
+						<li><b>Model</b> - stores data and sometimes data - related logic</li>
+						<li><b>View</b> - presenatation layer, defines and performs view - related operations</li>
+						<li><b>Controller</b> - business logic, connect other layers</li>
+					</ul>
+				</section>
+				<section>
+					<h2>MVC</h2>
+					<img src="img/mvc.png"/>
+				</section>
+				<section>
+					<h2>Multiple MVC implementations</h2>
+					<div class="columns">
+						<div><p>Typical MVC (ExtJS)</p><img src="img/mvc_extjs.png"/></div>
+						<div><p>MVVM (AngularJS)</p><img src="img/mvc_angular.png"/></div>
+						<div><p>MV* (Backbone)</p><img src="img/mvc_backbone.png"/></div>
+					</div>
+				</section>
+				<section>
+					<h2>Our (simple) MVC implementation</h2>
+					<img src="img/our_mvc.png"/>
+				</section>
+				<section>
+					<h2>Three layers</h2>
+						<pre><code>
+//js/view/BaseView.js
+APP.BaseView = function () {
+
+};
+APP.BaseView.prototype = {
+
+};
+</code></pre>
+<pre><code>
+//js/controller/BaseController.js
+APP.BaseController = function () {
+
+}
+
+APP.BaseController.prototype = {
+
+}
+</code></pre>
+<pre><code>
+//js/model/BaseModel.js
+APP.BaseModel = function () {
+
+}
+
+App.BaseModel.prototype = {
+
+}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Inheritance</h2>
+					<p>View need to emit events. So it need to inherit EventEmitter functionality.</p>
+					<img src="img/ee_inheritance.png"/>
+				</section>
+				<section>
+					<h2>Inheritance - JavaScript version</h2>
+					<p>Inheritance in JavaScript is based on prototypes.</p> <p>So called prototype chaing is used to store and call inherited methods / attributes.</p>
+					<p><img src="img/prototypes.png"/></p>
+				</section>
+				<section>
+					<h2>Inheritance - implementation</h2>
+					<pre><code>
+App.Helpers = {
+	inherits: function (Parent, Child) {
+		//We need to create a proper prototype chain here
+	}
+}
+</code></pre>
+				</section>
+				<section>
+					<h2>Inheritance - implementation</h2>
+					<pre><code>
+	inherits: function (Parent, Child) {
+		Child.prototype = Parent.prototype;
+	}
+</code></pre>
+					<p class="fragment error">NOPE</p>
+				</section>
+				<section>
+					<h2>Inheritance - implementation</h2>
+					<pre><code>
+	inherits: function (Parent, Child) {
+		Child.prototype = new Parent();
+	}
+					</code></pre>
+					<pre class="fragment"><code>
+	Parent = function () {
+		this.smth = performHeavyOperation();
+	}
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Inheritance - implementation</h2>
+					<pre><code>
+	inherits: function (Parent, Child) {
+		var F = function () {};
+		F.prototype = Parent.prototype;
+		Child.prototype = new F();
+		Child.prototype.constructor = Child;
+	}</code></pre>
+				</section>
+
+				<section>
+					<h2>View</h2>
+					<p>View represents some DOM element. It encapsulates view structure and logic.</p>
+					<p>We will create multiple view classes but all will inherit basic functionality from the BaseView class</p>
+
+				</section>
+
+				<section>
+					<h2>BaseView.js</h2>
+
+					<pre><code>
+App.BaseView = function () {
+	App.EventEmitter.call(this);
+};
+
+App.Helpers.inherits(App.BaseView, App.EventEmitter);
+</code></pre>
+
+				</section>
+				<section>
+					<h2>Templates</h2>
+					<pre><code>
+&lt;div class="template" id="templateId"&gt;
+	&lt;div&gt;
+		Some template it is
+	&lt;/div&gt;
+&lt;/div&gt;
+				</code></pre
+				>
+				<pre class="fragment"><code>
+getTemplate: function (templateId) {
+	var template = document.getElementById(templateId);
+	return template.innerHTML;
+}
+				</code></pre>
+				</section>
+				<section>
+					<h2>Element creation</h2>
+					<pre><code>
+render: function (html) {
+	var el = document.createElement('div');
+	el.innerHTML = html;
+	return el.firstElementChild;
+}
+				</code></pre>
+				</section>
+				<section>
+					<h2>Model</h2>
+					<h4>In our case model is just a simple plain object that stores data</h4>
+				</section>
+
+				<section>
+				<section>
+					<h2>Client - Server communication</h2>
+					<p>We will use websockets to load and send data to the server.</p>
+					<p>Client and Server are comunicating using events. Thanks to socket.io this method is simple, compatible and allows real time communication</p>
+
+					<img src="img/client_server.png"/>
+
+				</section>
+
+				<section>
+					<h2>Connecting to the server</h2>
+					<pre><code>
+App.Application.socket = io.connect(App.Config.serverUrl);
+				</code></pre>
+				</section>
+				<section>
+				<h2>Communication</h2>
+				<pre class="fragment"><code>
+//receive server event
+App.Application.socket.on('tweet', function (data) {
+	console.log(data); // do something
+});				</code></pre>
+				<pre class="fragment"><code>
+App.Application.socket.emit('login', loginData);
+				</code></pre>
+				</section>
+
+				</section>
+
+				<section>
+
+					<h1>Application implementation</h1>
+
+				</section>
+
+				<section>
+					<h2>Application modules</h2>
+					<p>Discussion...</p>
+				</section>
+
+				<section>
+					<h2>HTML structure</h2>
+				</section>
+
+				<section>
+					<h2>Application instance</h2>
+					<p>Central application point. It stores "global" variables, emits global events.</p>
+
+				</section>
+
+				<section>
+					<h2>Registration</h2>
+					<h4>Simple form with the HTML5 validation</h4>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>Registration</h2>
+						<h4>HTML5 fields types</h4>
+					</section>
+
+					<section>
+						<h2>Email</h2>
+						<p>Email address validation</p>
+						<img src="img/html5_email.jpg" />
+					</section>
+
+					<section>
+						<h2>Date</h2>
+						<p>Built-in date picker</p>
+						<img src="img/html5_date.jpg" />
+					</section>
+
+					<section>
+						<h2>Time</h2>
+						<p>Selection time according to the specified format</p>
+						<img src="img/html5_time.jpg" />
+					</section>
+
+					<section>
+						<h2>Number</h2>
+						<p>Number validation</p>
+						<img src="img/html5_number.jpg" />
+					</section>
+
+					<section>
+						<h2>Color</h2>
+						<p>Built-in color picker</p>
+						<img src="img/html5_color.jpg" />
+					</section>
+
+					<section>
+						<h2>Range</h2>
+						<p>Slider control</p>
+						<img src="img/html5_range.jpg" />
+					</section>
+
+				</section>
+
+				<section>
+					<h2>Registration</h2>
+					<h4>Form fields</h4>
+
+					<ul>
+						<li>login - type: email</li>
+						<li>password - type: password</li>
+						<li>birth - type: date</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Registration</h2>
+					<h4>How to obtain the form values and pass them to controller?</h4>
+					<pre><code>
+	form.addEventListener('submit', function (event) {
+		var form, data;
+		event.preventDefault();
+
+		form = event.target;
+		data = {
+		        login: form.elements['login'].value,
+		        password: form.elements['password'].value,
+		        birth: form.elements['birth'].value
+		};
+		this.emit('register', data);
+	});</code></pre>
+				</section>
+
+				<section>
+					<h2>Registration</h2>
+					<h4>Controller</h4>
+
+					<pre><code>
+this.view.hide();
+App.Application.socket.emit('register', data);
+App.Application.emit('logininit');
+</code></pre>
+				</section>
+
+				<section>
+					<h1>Login</h1>
+				</section>
+
+				<section>
+					<h2>Login</h2>
+					<h4>Form fields</h4>
+
+					<ul>
+						<li>login - type: email</li>
+						<li>password - type: password</li>
+					</ul>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>Tweets</h2>
+						<h4>Dynamic list, updated in the real time</h4>
+					</section>
+
+					<section>
+						<h2>Tweets template</h2>
+						<pre><code>
+<ul>
+	<li>
+		<img src="img/user.png" width="48" height="48" />
+		<span>
+			<strong>Michał Jaskólski</strong>
+			<time datetime="13:01:20">13:01:20</time>
+		</span>
+		<p>This is an example message written by a registered user. Join the conversation to write your own!</p>
+	</li>
+</ul></code></pre>
+					</section>
+
+					<section>
+						<h2>Whole list, based on one element</h2>
+						<pre><code>
+this._tweetElement = this._tweetsList.querySelector('li');
+...
+var newEl = this._tweetElement.cloneNode(true);
+this._tweetsList.appendChild(newEl);</code></pre>
+					</section>
+
+					<section>
+						<h2>Update list with new data</h2>
+						<pre><code>
+App.Application.socket.on('tweet', this.onTweet.bind(this));
+...
+App.TweetsController.prototype.onTweet = function (data) {
+	data.forEach(function (oneTweet) {
+		this.view.addTweet(oneTweet);
+	}, this);
+}</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+
+					<section>
+						<h2>Tweets and WebSockets</h2>
+						<h4>Adding a new tweet</h4>
+					</section>
+
+					<section>
+						<h2>Get form values</h2>
+						<p>The same way as in the registration form</p>
+						<pre><code>
+var form, data;
+event.preventDefault();
+
+form = event.target;
+data = {
+    msg: form.elements['tweet-msg'].value,
+    time: Date.now()
+};
+this.emit('add', data);
+form.reset();
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Send data in real-time</h2>
+						<p>Controller emits socket event to the server</p>
+						<pre><code>
+App.Application.socket.emit('tweet', data);
+						</code></pre>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h2>Header</h2>
+						<h4>Display some additional info</h4>
+					</section>
+				</section>
+
+				<section>
+					<h1>It's alive!</h1>
+					<p><br /></p>
+					<p>GitHub: <a href="https://github.com/sosnowski/lodz-js-workshop">github.com/sosnowski/lodz-js-workshop</a></p>
+					<p>By: <a href="mailto:damian.sosnowski@outlook.com">Damian Sosnowski</a><br />
+						<a href="mailto:kkotlarski@gmail.com">Krzysztof Kotlarski</a><br />
+						<a href="mailto:mateusz.gorynia@rulefinancial.com">Mateusz Gorynia</a><br />
+				</section>
+
+				<!-- <section>
+
+					<section>
+						<h2>Tweets and WebSockets</h2>
+						<h4>Removing tweets</h4>
+					</section>
+
+					<section>
+						<h2>React on buttons clicks</h2>
+						<p>We use the event delegation</p>
+						<pre><code>
+	var self = this,
+	    list = document.querySelector('.tweets-list');
+
+	list.addEventListener('click', function (event) {
+	    var target = event.target;
+	    if (target.tagName === 'LI') {
+	        self.fire('removetweet', target.dataset.id);
+	    }
+	});
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Send data to the server</h2>
+						<pre><code>
+	view.on('removetweet', function (id) {
+	    exampleSocket.send(id);
+	});
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Remove a tweet from list</h2>
+						<p>Controller</p>
+						<pre><code>
+	exampleSocket.onmessage = function (event) {
+	    model.removeItem(event.data);
+	};
+
+	model.on('removeitem', function (id) {
+	    view.removeTweet(id);
+	});
+						</code></pre>
+						<p>View</p>
+						<pre><code>
+	var removeTweet = function (id) {
+	    var listEl = document.querySelector('.tweets-list'),
+	        tweetEl = listEl.querySelector('[data-id="' + id + '"]');
+	    if (tweetEl) {
+	        listEl.removeChild(tweetEl);
+	    }
+	};
+						</code></pre>
+					</section>
+
+				</section> -->
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
